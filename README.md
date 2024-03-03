@@ -1,2 +1,2 @@
 # hlsocial
-edu project
+Simple Social Network as a educational project
