@@ -1,0 +1,16 @@
+FROM ubuntu:20.04
+
+LABEL Name="ubuntu20.04 with updates"
+
+# RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates
+# COPY files/ubuntu/sources.list /etc/apt/sources.list
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install \
+    autoconf \
+    automake \
+    libtool \
+    build-essential \
+    cmake \
+    curl \
+    git \
+    make \
+    patch

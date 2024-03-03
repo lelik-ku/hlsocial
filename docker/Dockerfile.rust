@@ -1,0 +1,22 @@
+FROM nlsocial/ubuntu-rust:20.04 AS build-cont
+
+ARG Version="0.1.0"
+
+LABEL Name="hlsocial rust-based api"
+LABEL Version=${Version}
+
+COPY --chown=rust:rust \
+    ./rust/ \
+    /build/
+
+RUN cd /build/rust && \
+    make build-rust
+
+
+
+FROM ubuntu:20.04
+COPY --from=stage build-cont \
+    /build/rust/target/ \
+    /usr/local/bin/
+
+CMD echo Version is ${Version}

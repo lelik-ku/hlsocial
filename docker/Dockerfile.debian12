@@ -1,0 +1,16 @@
+FROM debian:bookworm
+
+LABEL Name="Debian12 with updates"
+
+COPY files/debian_bookworm/sources.list /etc/apt/sources.list
+RUN rm -rf /etc/apt/sources.list.d/ && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y upgrade && \
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install \
+        build-essential \
+        cmake \
+        curl \
+        git \
+        make \
+        patch \
+        ca-certificates

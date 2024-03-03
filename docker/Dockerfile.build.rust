@@ -1,0 +1,14 @@
+FROM hlsocial/debian:bookworm
+
+LABEL Name="Debian 12 based Rust builder"
+LABEL Version=${Version}
+
+RUN adduser --disabled-password --gecos "" rust
+RUN mkdir -p /build && chown -R rust:rust /build
+USER rust
+WORKDIR /build
+RUN cd /build && \
+    curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -o ./sh.rustup.rs && \
+    chmod +x ./sh.rustup.rs && \
+    ./sh.rustup.rs -y && \
+    rm sh.rustup.rs

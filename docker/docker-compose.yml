@@ -1,0 +1,49 @@
+version: '2.4'
+
+networks:
+  hlsocial_net:
+    driver: bridge
+    name: hlsocial_net
+    ipam:
+      config:
+        - subnet: 172.31.240.0/24
+
+services:
+  db:
+    image: hlsocial/postgres:15.6-bookworm
+    container_name: db
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    networks:
+      hlsocial_net:
+        ipv4_address: 172.31.240.5
+    environment:
+      POSTGRES_DB: hlsocial
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: MySuperSecretCoolPassword
+    volumes:
+      - ../.tmp/postgresql:/var/lib/postgresql/data/
+
+  api:
+    image: hlsocial/api:0.1.0
+    container_name: api
+    depends_on:
+      - db
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    networks:
+      hlsocial_net:
+        ipv4_address: 172.31.240.10
+    environment:
+      DB_HOST: db
+      DB_NAME: hlsocial
+      DB_USER: user
+      DB_PASS: MySuperSecretCoolPassword

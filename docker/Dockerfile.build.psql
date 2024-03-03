@@ -1,0 +1,9 @@
+FROM postgres:15.6-bookworm
+
+LABEL Name="Debian 12 based PosgreSQL server"
+
+COPY files/debian_bookworm/sources.list /etc/apt/sources.list
+RUN cat /etc/apt/sources.list.d/pgdg.list >> /etc/apt/sources.list && \
+    rm -rf /etc/apt/sources.list.d/ && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y upgrade
