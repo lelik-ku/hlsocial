@@ -1,5 +1,5 @@
 # hlsocial
-Simple Social Network as a educational project
+Simple Social Network as an educational project
 
 ## Run locally
 * install rust
