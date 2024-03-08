@@ -1,4 +1,4 @@
-.PHONY: clean distclean build run docker_run stop mock
+.PHONY: clean distclean run docker_build docker_run stop mock
 
 ROOT=$(shell pwd)
 TMP=$(ROOT)/.tmp
@@ -33,7 +33,7 @@ $(TMP)/.psql: $(TMP)
 	touch $@
 
 
-build: $(TMP)/.builder.rust $(TMP)/.psql
+docker_build: $(TMP)/.builder.rust $(TMP)/.psql
 
 run:
 	docker-compose -f docker/docker-compose.yml up -d db

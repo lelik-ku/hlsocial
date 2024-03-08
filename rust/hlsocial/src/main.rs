@@ -1,5 +1,4 @@
-use actix_web::{web::Data, App, HttpServer};
-use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use sqlx::postgres::PgPoolOptions;
 // use scrypt::{
 //     password_hash::{
 //         rand_core::OsRng,
@@ -9,12 +8,8 @@ use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 // };
 
 mod config;
-mod services;
+mod api;
 
-
-pub struct AppState {
-    db: Pool<Postgres>
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -24,26 +19,23 @@ async fn main() -> std::io::Result<()> {
     // PSQL Connection
     let pgurl = format!("postgres://{}:{}@{}:{}/{}", config.db_user, config.db_pass, config.db_host, config.db_port, config.db_name);
     let pool = PgPoolOptions::new().max_connections(5).connect(&pgurl).await;
+    println!("INFO: Connecting to PostgreSQL server: {}@{}:{}...", config.db_user, config.db_host, config.db_port);
     let pool = match pool {
         Ok(p) => p,
         Err(e) => panic!("ERROR: Can't connect to PostgreSQL server: {}@{}:{} due to: {:?}", config.db_user, config.db_host, config.db_port, e)
     };
+    println!("INFO: Applying migrations...");
     let _ = match sqlx::migrate!("./migrations").run(&pool).await {
         Ok(m) => m,
-        Err(e) => println!("WARNING: Can't apply migrations to PostgreSQL server: {}@{}:{} due to: {:?}", config.db_user, config.db_host, config.db_port, e)
+        Err(e) => panic!("ERROR: Can't apply migrations to PostgreSQL server: {}@{}:{} due to: {:?}", config.db_user, config.db_host, config.db_port, e)
     };
 
+    // Debug
+    // let r = api::users_read(Data::new(AppState {db: pool.clone()})).await;
+    // println!("{:?}", r);
+
     // API Server
-    HttpServer::new(move || {
-        App::new()
-            .app_data(Data::new(AppState {db: pool.clone()}))
-            .service(services::get_users)
-            // .service(echo)
-            // .route("/hey", web::get().to(manual_hello))
-    })
-    .bind(format!("{}:{}", config.http_host, config.http_port))?
-    .run()
-    .await
+    api::start_server(config, pool).await
 }
 
 // fn main() {

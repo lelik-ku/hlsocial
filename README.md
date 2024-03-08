@@ -2,13 +2,18 @@
 Simple Social Network as a educational project
 
 ## Run locally
+* install rust
+* install npm and react
+* build and run app
 ```
+make clean
 make build
 make run
 ```
 
 ## Run app inside docker
 ```
-make build
+make clean
+make docker_build
 make docker_run
 ```

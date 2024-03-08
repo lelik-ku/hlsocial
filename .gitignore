@@ -3,5 +3,8 @@ rust/**/*/target/
 rust/**/*/Cargo.lock
 **/*.rs.bk
 rust/*.pdb
+wi/build/
+wi/dist/
+wi/node_modules/
 .vscode/
 .tmp/
