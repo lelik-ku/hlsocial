@@ -1,9 +1,14 @@
+CREATE EXTENSION citext;
+
+CREATE DOMAIN email AS citext
+   CHECK ( value ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$' );
+
 CREATE TABLE IF NOT EXISTS users(
    user_id BIGSERIAL NOT NULL PRIMARY KEY,
-   first_name VARCHAR (50),
+   first_name VARCHAR (50) NOT NULL,
    second_name VARCHAR (50),
    pwhash VARCHAR (100) NOT NULL,
-   email VARCHAR (150) UNIQUE NOT NULL,
+   email email UNIQUE NOT NULL,
    gender CHAR (1),
    birthdate DATE,
    biography VARCHAR (300),
