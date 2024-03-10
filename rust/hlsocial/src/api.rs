@@ -15,6 +15,7 @@ pub async fn start_server(config: config::Config, pool: Pool<Postgres>) -> std::
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(AppState {db: pool.clone()}))
+            .service(v1::login)
             .service(v1::users_get_all)
             .service(v1::user_get)
             .service(v1::user_delete)
