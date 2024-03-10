@@ -1,0 +1,19 @@
+.App {
+  text-align: left;
+}
+
+.App-header {
+  background-color: #b3c6e9;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: left;
+  font-size: 32px;
+  color: black;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
