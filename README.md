@@ -9,7 +9,8 @@ chmod +x ./sh.rustup.rs && \
 ./sh.rustup.rs -y 
 ```
 * install npm and react
-```curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash - &&\
+```
+curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
 ```
 * build and run app
