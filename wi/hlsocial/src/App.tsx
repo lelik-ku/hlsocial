@@ -1,17 +1,18 @@
 import React from 'react';
-import { TeamOutlined, UserOutlined, PoweroffOutlined, SearchOutlined } from '@ant-design/icons';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { TeamOutlined, UserOutlined, PoweroffOutlined, SearchOutlined, HomeOutlined } from '@ant-design/icons';
 import { Flex, MenuProps, Table } from 'antd';
 import { Layout, Menu, theme, Image } from 'antd';
 import logo from './hl.svg';
 import './App.css';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import Profile from './pages/Profile';
 
 const { Header, Content, Sider } = Layout;
 
 const menu_items: MenuProps['items'] = [
   {
     key: `/`,
-    icon: React.createElement(UserOutlined),
+    icon: React.createElement(HomeOutlined),
     label: `Home`,
   },
   {
@@ -33,7 +34,6 @@ const menu_items: MenuProps['items'] = [
     key: `logout`,
     icon: React.createElement(PoweroffOutlined),
     label: `Logout`,
-    danger: true,
   },
 ];
 
@@ -58,10 +58,11 @@ const users_columns = [
 function Data() {
   return <div>
     <Routes>
-      <Route path="/" element={<div>Root</div>}></Route>
-      <Route path="/profile" element={<div>Profile</div>}></Route>
-      <Route path="/search" element={<div>Search</div>}></Route>
-      <Route path="/users" element={<div>Users<Table dataSource={dataSource} columns={users_columns} /></div>}></Route>
+      <Route path="/" element={<div>Welcome to HL Social Network!</div>}></Route>
+      <Route path="/profile" element={Profile()}></Route>
+      <Route path="/search" element={<div>Search (TODO)</div>}></Route>
+      <Route path="/users" element={<div>Users (TODO)<Table dataSource={dataSource} columns={users_columns} /></div>}></Route>
+      <Route path="/logout" element={<div>Logout (TODO)</div>}></Route>
     </Routes>
   </div>
 }
@@ -72,7 +73,7 @@ const App: React.FC = () => {
   } = theme.useToken();
 
   const navigate = useNavigate();
-
+  
   return (
     <Layout>
       <Header className='App-header' style={{ display: 'flex', alignItems: 'left' }}>

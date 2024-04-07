@@ -13,16 +13,18 @@ chmod +x ./sh.rustup.rs && \
 curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
 ```
-* build and run app
+* build app
 ```
 make clean
-make build
+make docker_build
+```
+
+## Run app
+```
 make run
 ```
 
 ## Run app inside docker
 ```
-make clean
-make docker_build
 make docker_run
 ```

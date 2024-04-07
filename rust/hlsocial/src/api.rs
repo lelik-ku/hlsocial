@@ -20,6 +20,8 @@ pub async fn start_server(config: config::Config, pool: Pool<Postgres>) -> std::
             .service(v1::user_get)
             .service(v1::user_delete)
             .service(v1::user_post)
+            .service(v1::user_put)
+            .service(v1::quicksearch)
     })
     .bind(format!("{}:{}", config.http_host, config.http_port))?
     .run()

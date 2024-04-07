@@ -1,4 +1,4 @@
-.PHONY: clean distclean run docker_build docker_run stop mock
+.PHONY: clean distclean run run_wi docker_build docker_run stop mock
 
 ROOT=$(shell pwd)
 TMP=$(ROOT)/.tmp
@@ -43,6 +43,9 @@ run:
 		export DB_USER=$$(docker exec db env | grep POSTGRES_USER | awk -F= '{print $$2}') && \
 		export DB_PASS=$$(docker exec db env | grep POSTGRES_PASSWORD | awk -F= '{print $$2}') && \
 		cargo run
+
+run_wi:
+	cd wi/$(PROJECT) && npm start
 
 mock:
 
