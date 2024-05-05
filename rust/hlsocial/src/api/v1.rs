@@ -99,7 +99,7 @@ pub async fn sql_login_by_email(state: Data<AppState>, user: UserLoginByEmail) -
 }
 
 pub async fn sql_users_get_all(state: Data<AppState>) -> Result<Vec<User>, Box<dyn Error>> {
-    let sql = "SELECT * FROM users";
+    let sql = "SELECT * FROM users ORDER BY user_id";
     let us = sqlx::query_as::<_, User> (sql)
     .fetch_all(&state.db)
     .await?;
@@ -177,7 +177,7 @@ pub async fn sql_user_put(state: Data<AppState>, user: UserUpdate) -> Result<u64
     Ok(res.rows_affected())
 }
 
-#[post("/login")]
+#[post("/v1/login")]
 async fn login(state: Data<AppState>, user: web::Json<UserLoginByEmail>) -> impl Responder {
     let user = user.into_inner();
     match sql_login_by_email(state, user).await {
@@ -186,7 +186,7 @@ async fn login(state: Data<AppState>, user: web::Json<UserLoginByEmail>) -> impl
     }
 }
 
-#[get("/users")]
+#[get("/v1/users")]
 async fn users_get_all(state: Data<AppState>) -> impl Responder {
     match sql_users_get_all(state).await {
         Ok(s) => match serde_json::to_string(&s) {
@@ -197,7 +197,7 @@ async fn users_get_all(state: Data<AppState>) -> impl Responder {
     }
 }
 
-#[get("/users/{user_id}")]
+#[get("/v1/users/{user_id}")]
 async fn user_get(state: Data<AppState>, path: web::Path<i64>) -> impl Responder {
     let user_id = path.into_inner();
     match sql_users_get_by_id(state, user_id).await {
@@ -210,7 +210,7 @@ async fn user_get(state: Data<AppState>, path: web::Path<i64>) -> impl Responder
     }
 }
 
-#[delete("/users/{user_id}")]
+#[delete("/v1/users/{user_id}")]
 async fn user_delete(state: Data<AppState>, path: web::Path<i64>) -> impl Responder {
     let user_id = path.into_inner();
     match sql_users_delete_by_id(state, user_id).await {
@@ -220,7 +220,7 @@ async fn user_delete(state: Data<AppState>, path: web::Path<i64>) -> impl Respon
     }
 }
 
-#[post("/users")]
+#[post("/v1/users")]
 async fn user_post(state: Data<AppState>, user: web::Json<UserCreate>) -> impl Responder {
     let user = user.into_inner();
     match sql_user_post(state, user).await {
@@ -229,7 +229,7 @@ async fn user_post(state: Data<AppState>, user: web::Json<UserCreate>) -> impl R
     }
 }
 
-#[post("/quicksearch")]
+#[post("/v1/quicksearch")]
 async fn quicksearch(state: Data<AppState>, j: web::Json<UserQuickSearch>) -> impl Responder {
     let s = j.into_inner();
     match sql_quicksearch(state, s.text).await {
@@ -242,7 +242,7 @@ async fn quicksearch(state: Data<AppState>, j: web::Json<UserQuickSearch>) -> im
     }
 }
 
-#[put("/users/{user_id}")]
+#[put("/v1/users/{user_id}")]
 async fn user_put(state: Data<AppState>, path: web::Path<i64>, user: web::Json<UserUpdate>) -> impl Responder {
     let mut user = user.into_inner();
     user.user_id = path.into_inner();

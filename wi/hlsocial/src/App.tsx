@@ -1,11 +1,12 @@
 import React from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { TeamOutlined, UserOutlined, PoweroffOutlined, SearchOutlined, HomeOutlined } from '@ant-design/icons';
-import { Flex, MenuProps, Table } from 'antd';
-import { Layout, Menu, theme, Image } from 'antd';
+import { Flex, MenuProps } from 'antd';
+import { Layout, Menu, theme } from 'antd';
 import logo from './hl.svg';
 import './App.css';
 import Profile from './pages/Profile';
+import Users from './pages/Users';
 
 const { Header, Content, Sider } = Layout;
 
@@ -37,31 +38,13 @@ const menu_items: MenuProps['items'] = [
   },
 ];
 
-const users_columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-];
-
-function Data() {
+function MenuItems() {
   return <div>
     <Routes>
       <Route path="/" element={<div>Welcome to HL Social Network!</div>}></Route>
       <Route path="/profile" element={Profile()}></Route>
       <Route path="/search" element={<div>Search (TODO)</div>}></Route>
-      <Route path="/users" element={<div>Users (TODO)<Table dataSource={dataSource} columns={users_columns} /></div>}></Route>
+      <Route path="/users" element={Users()}></Route>
       <Route path="/logout" element={<div>Logout (TODO)</div>}></Route>
     </Routes>
   </div>
@@ -108,7 +91,7 @@ const App: React.FC = () => {
           borderRadius: borderRadiusLG,
         }}
       >
-        <Data />
+        <MenuItems />
       </Content>
     </Layout>
     </Layout>
@@ -117,18 +100,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-const dataSource = [
-  {
-    key: '1',
-    name: 'Mike',
-    age: 32,
-    address: '10 Downing Street',
-  },
-  {
-    key: '2',
-    name: 'John',
-    age: 42,
-    address: '10 Downing Street',
-  },
-];
