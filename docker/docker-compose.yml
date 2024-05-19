@@ -34,6 +34,7 @@ services:
     depends_on:
       - db
     restart: always
+    entrypoint: env
     logging:
       driver: "json-file"
       options:
@@ -47,3 +48,4 @@ services:
       DB_NAME: hlsocial
       DB_USER: user
       DB_PASS: MySuperSecretCoolPassword
+      JWT_SECRET: MySuperSecretCoolPassword

@@ -22,6 +22,9 @@ pub struct Config {
 
     #[envconfig(from = "HTTP_PORT", default = "8080")]
     pub http_port: u16,
+
+    #[envconfig(from = "JWT_SECRET")]
+    pub jwt_secret: String,
 }
 
 pub fn config() -> Config {

@@ -9,6 +9,7 @@ use sqlx::postgres::PgPoolOptions;
 
 mod config;
 mod api;
+mod error;
 
 
 #[actix_web::main]
@@ -30,20 +31,6 @@ async fn main() -> std::io::Result<()> {
         Err(e) => panic!("ERROR: Can't apply migrations to PostgreSQL server: {}@{}:{} due to: {:?}", config.db_user, config.db_host, config.db_port, e)
     };
 
-    // Debug
-    // let r = api::users_read(Data::new(AppState {db: pool.clone()})).await;
-    // println!("{:?}", r);
-
     // API Server
     api::start_server(config, pool).await
 }
-
-// fn main() {
-//     let password = b"admin";
-//     let salt = SaltString::generate(&mut OsRng);
-//     println!("Salt: {}", &salt);
-//     let password_hash = Scrypt.hash_password(password, &salt);
-//     println!("Hash: {}", &password_hash);
-//     // let parsed_hash = PasswordHash::new(&password_hash)?;
-//     // println!("{}", &parsed_hash);
-// }

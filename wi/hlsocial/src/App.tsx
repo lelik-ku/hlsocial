@@ -7,6 +7,9 @@ import logo from './hl.svg';
 import './App.css';
 import Profile from './pages/Profile';
 import Users from './pages/Users';
+import Search from './pages/Search';
+import Logout from './pages/Logout';
+import Login from './pages/Login';
 
 const { Header, Content, Sider } = Layout;
 
@@ -42,12 +45,17 @@ function MenuItems() {
   return <div>
     <Routes>
       <Route path="/" element={<div>Welcome to HL Social Network!</div>}></Route>
+      <Route path="/login" element={Login()}></Route>
       <Route path="/profile" element={Profile()}></Route>
-      <Route path="/search" element={<div>Search (TODO)</div>}></Route>
+      <Route path="/search" element={Search()}></Route>
       <Route path="/users" element={Users()}></Route>
-      <Route path="/logout" element={<div>Logout (TODO)</div>}></Route>
+      <Route path="/logout" element={Logout()}></Route>
     </Routes>
   </div>
+}
+
+function IsLoggedIn() {
+  return false;
 }
 
 const App: React.FC = () => {

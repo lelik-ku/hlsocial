@@ -42,6 +42,7 @@ run:
 		export DB_NAME=$$(docker exec db env | grep POSTGRES_DB | awk -F= '{print $$2}') && \
 		export DB_USER=$$(docker exec db env | grep POSTGRES_USER | awk -F= '{print $$2}') && \
 		export DB_PASS=$$(docker exec db env | grep POSTGRES_PASSWORD | awk -F= '{print $$2}') && \
+		export JWT_SECRET=$$(cat ${ROOT}/docker/docker-compose.yml | grep JWT_SECRET | awk '{print $$2}') && \
 		cargo run
 
 run_wi:

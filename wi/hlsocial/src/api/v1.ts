@@ -46,7 +46,3 @@ export interface UserUpdate {
 export interface UserCreateResult {
   user_id?: number,
 }
-
-export interface UserQuickSearch {
-  text?: string,
-}

@@ -1,18 +1,21 @@
-import { Button, Space, Table } from "antd";
+import { Table, TableProps, Input, Space } from "antd";
 import { useState } from "react";
+import { User } from "../api/v1";
 
-export default function AllUsers() {
-  const [users, setUsers] = useState();
+export default function Search() {
+  const [search, setSearch] = useState();
 
-  const getUsers = async () => {
-    const response = await fetch('/v1/users')
+  const searchUsers = async (text: String) => {
+    const response = await fetch('/v1/search/' + text)
     .then((response) => response.json())
     .catch(()=> {});
 
-    setUsers(response);
+    setSearch(response);
   };
 
-  const users_columns = [
+  const { Search } = Input;
+
+  const users_columns: TableProps<User>['columns'] = [
     {
         title: 'User ID',
         dataIndex: 'user_id',
@@ -53,11 +56,10 @@ export default function AllUsers() {
   return (
     <div>
       <Space direction="vertical">
-        <Button onClick={getUsers}>Get all users</Button>
+        <Search placeholder="input search text" onSearch={searchUsers} allowClear style={{ width: 400 }} />
       </Space>
       <hr />
-      <Table dataSource={users} columns={users_columns} rowKey={'user_id'}></Table>
+      <Table dataSource={search} columns={users_columns} rowKey={'user_id'}></Table>
     </div>
   )
 }
-

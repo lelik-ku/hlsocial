@@ -5,6 +5,7 @@ rust/**/*/Cargo.lock
 rust/*.pdb
 wi/build/
 wi/dist/
+wi/static/
 wi/node_modules/
 .vscode/
 .tmp/
