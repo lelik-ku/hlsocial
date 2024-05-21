@@ -22,9 +22,11 @@ make docker_build
 ## Run app
 ```
 make run
+make run_wi
 ```
 
-## Run app inside docker
+## Run app inside docker (TODO)
+Not ready yet
 ```
 make docker_run
 ```
