@@ -4,25 +4,19 @@ use actix_web::{
     web::{Data, self},
     HttpResponse, Responder, cookie::{Cookie, time::Duration, SameSite},
 };
-use serde::Deserialize;
 use pwhash::sha512_crypt;
 
-use super::{AppState, UserPwhash};
+use super::{AppState, UserPwhash, UserLoginByEmail, UserLoginResponce};
     
 use crate::{error::Error as Err, api::ANSWER_OK, api::TOKEN};
 use crate::api::v1::token;
 
 
-#[derive(Deserialize)]
-pub struct UserLoginByEmail {
-    email: String,
-    passwd: String,
-}
-
 pub async fn login(state: Data<AppState>, user: web::Json<UserLoginByEmail>) -> impl Responder {
     let user = user.into_inner();
     match sql_login_by_email(&state, user).await {
         Ok(id) => {
+            let body = UserLoginResponce { user_id: id };
             // TODO: get role from DB
             let role = if id == 1 { token::Role::Admin } else { token::Role::User };
             match token::create_jwt(&id.to_string(), role, &state.jwt_secret) {
@@ -36,7 +30,7 @@ pub async fn login(state: Data<AppState>, user: web::Json<UserLoginByEmail>) -> 
                         .max_age(Duration::days(1))
                         .finish()
                     )
-                    .body(ANSWER_OK),
+                    .body(serde_json::to_string(&body).unwrap_or_else(|_| "".to_string())),
                 Err(_) => HttpResponse::InternalServerError()
                     .body(Err::JWTTokenCreationError.to_string())
             }
@@ -66,7 +60,7 @@ async fn sql_login_by_email(state: &Data<AppState>, user: UserLoginByEmail) -> R
 }
 
 pub async fn logout() -> impl Responder {
-    HttpResponse::Unauthorized()
+    HttpResponse::Ok()
         .cookie(
             Cookie::build(TOKEN, "")
             .secure(true)

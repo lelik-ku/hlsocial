@@ -1,13 +1,21 @@
-import { Table, TableProps, Input, Space } from "antd";
+import { Table, TableProps, Input, Space, notification, NotificationArgsProps } from "antd";
 import { useState } from "react";
 import { User } from "../api/v1";
+import NotifyStatus from "./Notify";
+//import { Navigate } from "react-router-dom";
 
 export default function Search() {
+  const [msg, contextHolder] = notification.useNotification();
+  type NotificationPlacement = NotificationArgsProps['placement'];
+
   const [search, setSearch] = useState();
 
   const searchUsers = async (text: String) => {
-    const response = await fetch('/v1/search/' + text)
-    .then((response) => response.json())
+    const response = await fetch(encodeURI('/v1/search/' + text))
+    .then((response) => {
+      NotifyStatus(response.status)
+      return response.json()
+    })
     .catch(()=> {});
 
     setSearch(response);
@@ -54,6 +62,8 @@ export default function Search() {
   ];
 
   return (
+    <>
+    {contextHolder}
     <div>
       <Space direction="vertical">
         <Search placeholder="input search text" onSearch={searchUsers} allowClear style={{ width: 400 }} />
@@ -61,5 +71,7 @@ export default function Search() {
       <hr />
       <Table dataSource={search} columns={users_columns} rowKey={'user_id'}></Table>
     </div>
+    </>
   )
 }
+

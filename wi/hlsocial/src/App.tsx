@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { TeamOutlined, UserOutlined, PoweroffOutlined, SearchOutlined, HomeOutlined } from '@ant-design/icons';
+import { LoginOutlined, TeamOutlined, UserOutlined, PoweroffOutlined, SearchOutlined, HomeOutlined } from '@ant-design/icons';
 import { Flex, MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
 import logo from './hl.svg';
@@ -18,6 +18,11 @@ const menu_items: MenuProps['items'] = [
     key: `/`,
     icon: React.createElement(HomeOutlined),
     label: `Home`,
+  },
+  {
+    key: `login`,
+    icon: React.createElement(LoginOutlined),
+    label: `Login`,
   },
   {
     key: `profile`,
@@ -44,7 +49,7 @@ const menu_items: MenuProps['items'] = [
 function MenuItems() {
   return <div>
     <Routes>
-      <Route path="/" element={<div>Welcome to HL Social Network!</div>}></Route>
+      <Route path="/" element={<div><h3>Welcome to HL Social Network!</h3><br/>Remember that this is just an educational project.</div>}></Route>
       <Route path="/login" element={Login()}></Route>
       <Route path="/profile" element={Profile()}></Route>
       <Route path="/search" element={Search()}></Route>
@@ -54,11 +59,8 @@ function MenuItems() {
   </div>
 }
 
-function IsLoggedIn() {
-  return false;
-}
-
 const App: React.FC = () => {
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();

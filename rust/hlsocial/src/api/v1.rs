@@ -57,3 +57,14 @@ pub struct UserUpdate {
 pub struct UserCreateResult {
     user_id: i64,
 }
+
+#[derive(Deserialize)]
+pub struct UserLoginByEmail {
+    email: String,
+    passwd: String,
+}
+
+#[derive(Serialize)]
+pub struct UserLoginResponce {
+    user_id: i64,
+}

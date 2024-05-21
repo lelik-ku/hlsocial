@@ -1,12 +1,16 @@
-import { Button, Space, Table } from "antd";
+import { Button, Space, Table, notification } from "antd";
 import { useState } from "react";
+import NotifyStatus from "./Notify";
 
 export default function AllUsers() {
   const [users, setUsers] = useState();
 
   const getUsers = async () => {
     const response = await fetch('/v1/users')
-    .then((response) => response.json())
+    .then((response) => {
+      NotifyStatus(response.status)
+      return response.json()
+    })
     .catch(()=> {});
 
     setUsers(response);

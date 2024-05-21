@@ -46,3 +46,7 @@ export interface UserUpdate {
 export interface UserCreateResult {
   user_id?: number,
 }
+
+export interface UserLoginResult {
+  user_id?: number,
+}
