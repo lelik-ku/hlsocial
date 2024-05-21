@@ -6,7 +6,7 @@ use actix_web::{
 };
 use pwhash::sha512_crypt;
 
-use super::{AppState, UserPwhash, UserLoginByEmail, UserLoginResponce};
+use super::{AppState, UserPwhash, UserLoginByEmail, UserLoginResult};
     
 use crate::{error::Error as Err, api::ANSWER_OK, api::TOKEN};
 use crate::api::v1::token;
@@ -16,7 +16,7 @@ pub async fn login(state: Data<AppState>, user: web::Json<UserLoginByEmail>) -> 
     let user = user.into_inner();
     match sql_login_by_email(&state, user).await {
         Ok(id) => {
-            let body = UserLoginResponce { user_id: id };
+            let body = UserLoginResult { user_id: id };
             // TODO: get role from DB
             let role = if id == 1 { token::Role::Admin } else { token::Role::User };
             match token::create_jwt(&id.to_string(), role, &state.jwt_secret) {

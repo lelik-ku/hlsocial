@@ -1,22 +1,28 @@
-import { useEffect, useState } from "react";
-import { Button, Space } from "antd";
-import NotifyStatus from "./Notify";
+import { useState } from "react";
+import { Button, Descriptions, Space } from "antd";
+import { DescriptionsItemType } from "antd/es/descriptions";
+
+import { NotifyError, NotifySuccess } from "./Notify";
 import { User } from "../api/v1";
 
 
 export default function Profile() {
-  const [profile, setProfile] = useState<User>({});
+  const [profile, setProfile] = useState([] as DescriptionsItemType[]);
 
   const getUser = async () => {
     let user_id: string = localStorage.getItem("user_id") || "0";
-    const response: User = await fetch('/v1/users/' + user_id)
+    const response: User = await fetch(`/v1/users/${user_id}`)
     .then((response) => {
-      NotifyStatus(response.status)
-      return (response).json()
+      if (response.ok) {
+        NotifySuccess("")
+        return response.json()
+      } else { 
+        return response.text().then(text => { throw new Error(text) })
+      };
     })
-    .catch(()=> {});
+    .catch((e) => { NotifyError(e.toString()) });
 
-    setProfile(response);
+    response && setProfile(Object.entries(response).map(([k, v]) => ({ key: k, label: k, children: v })));
   };
 
   return (
@@ -25,8 +31,7 @@ export default function Profile() {
         <Button onClick={getUser}>Get self profile</Button>
       </Space>
       <hr />
-      {/* <Descriptions title="User Profile" bordered items={profile} /> */}
-      <p>{JSON.stringify(profile, null, 2)}</p>
+      {profile && <Descriptions title="User Profile" bordered items={profile} />}
     </div>
   )
 }

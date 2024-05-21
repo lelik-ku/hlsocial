@@ -1,6 +1,7 @@
-import { Button, Space, Table, notification } from "antd";
-import { useState } from "react";
-import NotifyStatus from "./Notify";
+import { Button, Space, Table } from "antd";
+import { useCallback, useState } from "react";
+
+import { NotifyError, NotifySuccess } from "./Notify";
 
 export default function AllUsers() {
   const [users, setUsers] = useState();
@@ -8,13 +9,31 @@ export default function AllUsers() {
   const getUsers = async () => {
     const response = await fetch('/v1/users')
     .then((response) => {
-      NotifyStatus(response.status)
-      return response.json()
+      if (response.ok) {
+        NotifySuccess("")
+        return response.json()
+      } else { 
+        return response.text().then(text => { throw new Error(text) })
+      };
     })
-    .catch(()=> {});
+    .catch((e)=> { NotifyError(e.toString()) });
 
     setUsers(response);
   };
+
+  const onDelete = useCallback(async (user_id: string) => {
+    try {
+      await fetch (`/v1/users/${user_id}`, {method: 'DELETE'})
+      .then((response) => {
+        if (response.ok) {
+          NotifySuccess("DELETE success")
+          getUsers()
+        } else { 
+          return response.text().then(text => { throw new Error(text) })
+        };
+      })
+    } catch (e: any) { NotifyError(e.toString()) }
+  }, [])
 
   const users_columns = [
     {
@@ -52,6 +71,15 @@ export default function AllUsers() {
       dataIndex: 'city',
       key: 'city',
     },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_: any, record: any) => (
+        <Space size="middle">
+          <a onClick={() => onDelete(record.user_id)}>Delete</a>
+        </Space>
+      ),
+    },
   ];
 
   return (
@@ -64,4 +92,3 @@ export default function AllUsers() {
     </div>
   )
 }
-

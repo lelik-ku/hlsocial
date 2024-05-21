@@ -1,7 +1,7 @@
-import { Button, Form, Input, Layout, Space, Table, TableProps } from "antd";
-import { useEffect, useState } from 'react';
-import { UserLoginByEmail, UserLoginResult } from "../api/v1";
-import NotifyStatus from "./Notify";
+import { Button, Form, Input, Layout } from "antd";
+import { useState } from 'react';
+import { UserLoginByEmail } from "../api/v1";
+import { NotifyError, NotifySuccess } from "./Notify";
 
 
 const userid = "user_id";
@@ -17,13 +17,17 @@ export default function Login() {
     };
     const response = await fetch('/v1/login/', requestOptions)
     .then((response) => {
-      NotifyStatus(response.status)
-      return response.json()
+      if (response.ok) {
+        NotifySuccess("")
+        return response.json()
+      } else { 
+        return response.text().then(text => { throw new Error(text) })
+      };
     })
-    .catch(()=> {});
+    .catch((e) => { NotifyError(e.toString()) });
 
-    localStorage.setItem(userid, response[userid]);
-    setLogin(JSON.stringify(response));
+    response && localStorage.setItem(userid, response[userid]);
+    response && setLogin(JSON.stringify(response[userid]));
   }
   
   return (

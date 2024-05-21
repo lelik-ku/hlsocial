@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { LoginOutlined, TeamOutlined, UserOutlined, PoweroffOutlined, SearchOutlined, HomeOutlined } from '@ant-design/icons';
+import { PlusOutlined, LoginOutlined, TeamOutlined, UserOutlined, PoweroffOutlined, SearchOutlined, HomeOutlined } from '@ant-design/icons';
 import { Flex, MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
 import logo from './hl.svg';
@@ -10,6 +10,7 @@ import Users from './pages/Users';
 import Search from './pages/Search';
 import Logout from './pages/Logout';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 const { Header, Content, Sider } = Layout;
 
@@ -18,6 +19,11 @@ const menu_items: MenuProps['items'] = [
     key: `/`,
     icon: React.createElement(HomeOutlined),
     label: `Home`,
+  },
+  {
+    key: `register`,
+    icon: React.createElement(PlusOutlined),
+    label: `Register`,
   },
   {
     key: `login`,
@@ -50,6 +56,7 @@ function MenuItems() {
   return <div>
     <Routes>
       <Route path="/" element={<div><h3>Welcome to HL Social Network!</h3><br/>Remember that this is just an educational project.</div>}></Route>
+      <Route path="/register" element={Register()}></Route>
       <Route path="/login" element={Login()}></Route>
       <Route path="/profile" element={Profile()}></Route>
       <Route path="/search" element={Search()}></Route>

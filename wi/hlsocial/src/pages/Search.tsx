@@ -1,7 +1,7 @@
 import { Table, TableProps, Input, Space, notification, NotificationArgsProps } from "antd";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { User } from "../api/v1";
-import NotifyStatus from "./Notify";
+import { NotifyError, NotifySuccess } from "./Notify";
 //import { Navigate } from "react-router-dom";
 
 export default function Search() {
@@ -13,13 +13,30 @@ export default function Search() {
   const searchUsers = async (text: String) => {
     const response = await fetch(encodeURI('/v1/search/' + text))
     .then((response) => {
-      NotifyStatus(response.status)
-      return response.json()
+      if (response.ok) {
+        NotifySuccess("")
+        return response.json()
+      } else { 
+        return response.text().then(text => { throw new Error(text) })
+      };
     })
-    .catch(()=> {});
+    .catch((e) => { NotifyError(e.toString()) });
 
-    setSearch(response);
+    response && setSearch(response);
   };
+
+  const onDelete = useCallback(async (user_id: string) => {
+    try {
+      await fetch (`/v1/users/${user_id}`, {method: 'DELETE'})
+      .then((response) => {
+        if (response.ok) {
+          NotifySuccess("DELETE sucess")
+        } else { 
+          return response.text().then(text => { throw new Error(text) })
+        };
+      })
+    } catch (e: any) { NotifyError(e.toString()) }
+  }, [])
 
   const { Search } = Input;
 
@@ -58,6 +75,15 @@ export default function Search() {
       title: 'City',
       dataIndex: 'city',
       key: 'city',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_: any, record: any) => (
+        <Space size="middle">
+          <a onClick={() => onDelete(record.user_id)}>Delete</a>
+        </Space>
+      ),
     },
   ];
 

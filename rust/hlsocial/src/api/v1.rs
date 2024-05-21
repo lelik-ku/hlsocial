@@ -1,6 +1,6 @@
 
-use sqlx::FromRow;
 use chrono::NaiveDate;
+use sqlx::FromRow;
 use serde::{Serialize, Deserialize};
 
 pub mod token;
@@ -36,7 +36,7 @@ pub struct UserCreate {
     email: String,
     passwd: String,
     gender: Option<String>,
-    birthdate: Option<NaiveDate>,
+    birthdate: Option<String>,
     biography: Option<String>,
     city: Option<String>,
 }
@@ -48,12 +48,12 @@ pub struct UserUpdate {
     second_name: Option<String>,
     email: String,
     gender: Option<String>,
-    birthdate: Option<NaiveDate>,
+    birthdate: Option<String>,
     biography: Option<String>,
     city: Option<String>,
 }
 
-#[derive(Deserialize, FromRow, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Debug)]
 pub struct UserCreateResult {
     user_id: i64,
 }
@@ -65,6 +65,6 @@ pub struct UserLoginByEmail {
 }
 
 #[derive(Serialize)]
-pub struct UserLoginResponce {
+pub struct UserLoginResult {
     user_id: i64,
 }

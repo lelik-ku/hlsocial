@@ -24,7 +24,7 @@ pub async fn start_server(config: config::Config, pool: Pool<Postgres>) -> std::
             .route("/v1/login", web::post().to(v1::login::login))
             .route("/v1/logout", web::post().to(v1::login::logout))
             .route("/v1/users", web::get().to(v1::user::users_get_all))
-            .route("/v1/users", web::post().to(v1::user::user_post))
+            .route("/v1/register", web::post().to(v1::user::user_post))
             .route("/v1/users/{user_id}", web::get().to(v1::user::user_get))
             .route("/v1/users/{user_id}", web::put().to(v1::user::user_put))
             .route("/v1/users/{user_id}", web::delete().to(v1::user::user_delete))

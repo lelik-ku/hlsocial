@@ -2,14 +2,14 @@ use std::future::{ready, Ready};
 
 use actix_web::{
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
-    Error, error::ErrorUnauthorized,
+    Error, error::ErrorUnauthorized, error::ErrorForbidden, http,
 };
 use futures_util::future::LocalBoxFuture;
 
-use crate::{error::Error as Err, api::TOKEN};
+use crate::{error::Error as Err, api::TOKEN, config};
 
 
-use super::token::validate_jwt;
+use super::token::{validate_jwt, Role};
 
 
 // There are two steps in middleware processing.
@@ -56,15 +56,17 @@ where
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
         match req.path() {
-            "/v1/login" | "/v1/login/" | "/v1/logout" | "/v1/logout/" => {},
+            "/v1/login" | "/v1/login/" | "/v1/logout" | "/v1/logout/" | "/v1/register" | "/v1/register/" => {},
             _ => {
                 match req.cookie(TOKEN) {
                     Some(token) => {
-                        // TODO: GET IT SOMEHOW
-                        // let config = config::config();
-                        // let jwt_secret = config.jwt_secret;
-                        let jwt_secret = "MySuperSecretCoolPassword";
-                        match validate_jwt(token.value(), jwt_secret) {
+                        let config = config::config();
+                        let jwt_secret = config.jwt_secret;
+                        match validate_jwt(token.value(), &jwt_secret) {
+                            Ok(Role::User) => {
+                                if req.method() == http::Method::DELETE || req.method() == http::Method::PUT {
+                                    return Box::pin(async { Err(ErrorForbidden("Not allowed for users"))} )}
+                                }
                             Ok(_) => {},
                             Err(e) => return Box::pin(async { Err(ErrorUnauthorized(e)) })
                         }

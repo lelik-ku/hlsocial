@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import NotifyStatus from './Notify';
+import { NotifyError, NotifySuccess } from "./Notify";
 // import { useState } from 'react';
 
 
@@ -8,12 +8,16 @@ export default function Logout() {
   const callLogout = async () => {
     localStorage.clear();
     sessionStorage.clear();
-    const response = await fetch('/v1/logout/', {method: 'POST'})
+    const _ = await fetch('/v1/logout/', {method: 'POST'})
     .then((response) => {
-      NotifyStatus(response.status)
-      return response.json()      
+      if (response.ok) {
+        NotifySuccess("")
+      } else { 
+        return response.text().then(text => { throw new Error(text) })
+      };
+      return
     })
-    .catch(()=> {});
+    .catch((e) => { NotifyError(e.toString()) });
   }
 
   return (

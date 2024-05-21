@@ -4,6 +4,7 @@ use actix_web::{
     web::{Data, self},
     HttpResponse, Responder,
 };
+use chrono::NaiveDate;
 use serde_json;
 use pwhash::sha512_crypt;
 
@@ -77,13 +78,23 @@ async fn sql_users_delete_by_id(state: &Data<AppState>, user_id: i64) -> Result<
 pub async fn user_post(state: Data<AppState>, user: web::Json<UserCreate>) -> impl Responder {
     let user = user.into_inner();
     match sql_user_post(&state, user).await {
-        Ok(id) => HttpResponse::Ok().body(id.to_string()),
+        Ok(id) => {
+            let body = UserCreateResult { user_id: id };
+            HttpResponse::Ok()
+            .body(serde_json::to_string(&body).unwrap_or_else(|_| "".to_string()))
+        },
         Err(e) => HttpResponse::InternalServerError().body(e.to_string())
     }
 }
 
 async fn sql_user_post(state: &Data<AppState>, user: UserCreate) -> Result<i64, Box<dyn Error>> {
     let pwhash = sha512_crypt::hash(user.passwd)?;
+    let birthdate = match &user.birthdate {
+        Some(d) => {
+            Some(NaiveDate::parse_from_str(&d, "%Y-%m-%dT%H:%M:%S.000Z").unwrap_or_default())
+        },
+        _ => None
+    };
     let sql = "INSERT INTO users 
     (first_name, second_name, email, pwhash, gender, birthdate, biography, city)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -94,7 +105,7 @@ async fn sql_user_post(state: &Data<AppState>, user: UserCreate) -> Result<i64, 
     .bind(&user.email)
     .bind(&pwhash)
     .bind(&user.gender)
-    .bind(&user.birthdate)
+    .bind(&birthdate)
     .bind(&user.biography)
     .bind(&user.city)
     .fetch_one(&state.db)
@@ -114,6 +125,12 @@ pub async fn user_put(state: Data<AppState>, path: web::Path<i64>, user: web::Js
 }
 
 async fn sql_user_put(state: &Data<AppState>, user: UserUpdate) -> Result<u64, Box<dyn Error>> {
+    let birthdate = match &user.birthdate {
+        Some(d) => {
+            Some(NaiveDate::parse_from_str(&d, "%Y-%m-%dT%H:%M:%S.000Z").unwrap_or_default())
+        },
+        _ => None
+    };
     let sql = "UPDATE users SET
     (first_name, second_name, email, gender, birthdate, biography, city)
     VALUES ($1, $2, $3, $4, $5, $6, $7) WHERE user_id = $8";
@@ -122,7 +139,7 @@ async fn sql_user_put(state: &Data<AppState>, user: UserUpdate) -> Result<u64, B
     .bind(&user.second_name)
     .bind(&user.email)
     .bind(&user.gender)
-    .bind(&user.birthdate)
+    .bind(&birthdate)
     .bind(&user.biography)
     .bind(&user.city)
     .bind(&user.user_id)
